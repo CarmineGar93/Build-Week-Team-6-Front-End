@@ -15,6 +15,7 @@ export const AddRuoloAction = (ruolo) => {
     }
 }
 
+
 /* export const RetrieveBookingsAction = (token) => {
     return async (dispatch) => {
         try {

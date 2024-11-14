@@ -46,7 +46,7 @@ const Home = () => {
             <OurNavbar />
             {
                 user && <div className=" text-center">
-                    <h1>Welcome {user.nome} {user.cognome}</h1>
+                    <h1>Benvenuto {user.nome} {user.cognome}</h1>
                     <img src={user.avatarUrl} alt="" className=" w-25"></img>
                 </div>
             }
