@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import OurNavbar from "./OurNavbar"
+import { AddRuoloAction } from "../actions"
 
 const Home = () => {
     const token = useSelector(state => state.token.token)
@@ -20,6 +22,9 @@ const Home = () => {
                 const userFromDb = await response.json();
                 console.log(userFromDb)
                 setUser(userFromDb)
+                userFromDb.ruoli.forEach(element => {
+                    dispatch(AddRuoloAction(element.nome))
+                });
             } else {
                 alert("Errore");
             }
@@ -38,6 +43,7 @@ const Home = () => {
     }, [])
     return (
         <>
+            <OurNavbar />
             {
                 user && <div className=" text-center">
                     <h1>Welcome {user.nome} {user.cognome}</h1>
