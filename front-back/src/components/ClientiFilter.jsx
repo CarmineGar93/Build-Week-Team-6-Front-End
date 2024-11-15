@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 
 const ClientiFilter = ({ onFilter }) => {
     const [fatturatoAnnuale, setFatturatoAnnuale] = useState('');
@@ -19,44 +20,48 @@ const ClientiFilter = ({ onFilter }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form onSubmit={handleSubmit} className='mx-2'>
+            <div className='mb-2'>
                 <label>Fatturato Annuale:</label>
                 <input
+                    className='ms-2 py-0'
                     type="number"
                     value={fatturatoAnnuale}
                     onChange={(e) => setFatturatoAnnuale(e.target.value)}
                     placeholder="Inserisci fatturato"
                 />
             </div>
-            <div>
+            <div className='mb-2'>
                 <label>Data di Inserimento:</label>
                 <input
+                    className='ms-2'
                     type="date"
                     value={inserimento}
                     onChange={(e) => setInserimento(e.target.value)}
                 />
             </div>
-            <div>
+            <div className='mb-2'>
                 <label>Data Ultimo Contatto:</label>
                 <input
+                    className='ms-2'
                     type="date"
                     value={ultimoContatto}
                     onChange={(e) => setUltimoContatto(e.target.value)}
                 />
             </div>
-            <div>
+            <div className='mb-2'>
                 <label>Ragione Sociale:</label>
                 <input
+                    className='ms-2 py-0'
                     type="text"
                     value={ragioneSociale}
                     onChange={(e) => setRagioneSociale(e.target.value)}
                     placeholder="Inserisci ragione sociale"
                 />
             </div>
-            <div>
+            <div className='mb-2'>
                 <label>Ordina per:</label>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className='ms-2'>
                     <option value="provincia">Provincia</option>
                     <option value="fatturatoAnnuale">Fatturato Annuale</option>
                     <option value="dataInserimento">Data Inserimento</option>
@@ -64,7 +69,7 @@ const ClientiFilter = ({ onFilter }) => {
                     <option value="ragioneSociale">Ragione Sociale</option>
                 </select>
             </div>
-            <button type="submit">Filtra</button>
+            <Button type="submit">Filtra</Button>
         </form>
     );
 };

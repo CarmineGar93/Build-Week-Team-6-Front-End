@@ -1,33 +1,77 @@
 import { useEffect, useState } from "react"
 import OurNavbar from "./OurNavbar"
 import { useSelector } from "react-redux"
-import { Card, Row, Col } from "react-bootstrap"
+import { Card, Row, Col, Button } from "react-bootstrap"
 import ClientiFilter from "./ClientiFilter"
+import CreazioneCliente from "./CreazioneCliente"
 
 const ClientiComponent = () => {
     const token = useSelector(state => state.token.token)
+    const ruoli = useSelector(state => state.ruoli.ruoli)
     const [clienti, setClienti] = useState([])
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     const retrieveClienti = async () => {
-        const response = await fetch("http://localhost:3001/clienti", {
-            headers: {
-                /* "Content-Type": "application/json", */
-                "Authorization": `Bearer ${token}`
+        try {
+            const response = await fetch("http://localhost:3001/clienti", {
+                headers: {
+                    /* "Content-Type": "application/json", */
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+                setClienti(data)
+            } else {
+                const error = await response.json();
+                alert(error.message);
             }
-        })
-        if (response.ok) {
-            const data = await response.json()
-            console.log(data)
-            setClienti(data)
+        } catch (error) {
+            console.log("Errore:", error);
+            alert("Si è verificato un errore. Riprova più tardi.");
         }
+
+    }
+    const chiamaCliente = async (e, id) => {
+        e.preventDefault()
+        const today = new Date().toISOString().split('T')[0];
+        const payload = {
+            ultimoContatto: today
+        }
+        try {
+            const response = await fetch(`http://localhost:3001/clienti/${id}/ultimoContatto`, {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            })
+            if (response.ok) {
+                alert("Chiamata effettuata con successo")
+                retrieveClienti()
+            } else {
+                const error = await response.json();
+                alert(error.message);
+            }
+        } catch (error) {
+            console.log("Errore:", error);
+            alert("Si è verificato un errore. Riprova più tardi.");
+        }
+
+
+
     }
     const fetchClienti = async (filterParams) => {
-        console.log(filterParams.dataInserimento)
-        const stringaFatturatoAnnuale = filterParams.fatturatoAnnuale ? `?fatturatoAnnuale=${filterParams.fatturatoAnnuale}&` : ``;
-        const stringaDataInserimento = filterParams.dataInserimento ? `?dataInserimento=${filterParams.dataInserimento}&` : ``;
-        const stringaUltimoContatto = filterParams.dataUltimoContatto ? `?dataUltimoContatto=${filterParams.dataUltimoContatto}&` : ``;
-        const stringaRagioneSociale = filterParams.ragioneSociale ? `?ragioneSociale=${filterParams.ragioneSociale}&` : ``;
+        const stringaFatturatoAnnuale = filterParams.fatturatoAnnuale ? `fatturatoAnnuale=${filterParams.fatturatoAnnuale}&` : ``;
+        const stringaDataInserimento = filterParams.inserimento ? `dataInserimento=${filterParams.inserimento}&` : ``;
+        const stringaUltimoContatto = filterParams.ultimoContatto ? `dataUltimoContatto=${filterParams.ultimoContatto}&` : ``;
+        const stringaRagioneSociale = filterParams.ragioneSociale ? `ragioneSociale=${filterParams.ragioneSociale}&` : ``;
+        const stringaSortBy = filterParams.sortBy ? `sortBy=${filterParams.sortBy}&` : ``;
         try {
-            const response = await fetch("http://localhost:3001/clienti" + stringaFatturatoAnnuale + stringaDataInserimento + stringaUltimoContatto + stringaRagioneSociale, {
+            const response = await fetch("http://localhost:3001/clienti?" + stringaFatturatoAnnuale + stringaDataInserimento + stringaUltimoContatto + stringaRagioneSociale + stringaSortBy, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -40,18 +84,30 @@ const ClientiComponent = () => {
         }
     };
     useEffect(() => {
-        retrieveClienti()
+        if (!show) {
+            retrieveClienti()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [show])
     return (
         <>
             <OurNavbar />
+            <CreazioneCliente show={show} handleClose={handleClose} />
             <ClientiFilter onFilter={fetchClienti} />
             <h1 className="text-center mb-3">Lista clienti</h1>
             {
+                ruoli.some(ruolo => ruolo === "ADMIN" || ruolo === "USER") && (
+                    <div className="text-center">
+                        <Button className="mb-3" onClick={() => handleShow()}>Aggiungi nuovo cliente</Button>
+                    </div>
+                )
+            }
+
+
+            {
                 clienti.map(cliente => {
                     return (
-                        <Card key={cliente.clienteId} className="mb-2">
+                        <Card key={cliente.clienteId} className="m-2">
                             <Row className="p-1">
                                 <Col xs={'auto'}>
                                     <img src={cliente.logoAziendale} alt="" width={100} height={100} />
@@ -64,6 +120,7 @@ const ClientiComponent = () => {
                                     <p className="m-0">Indirizzo sede legale: {cliente.indirizzoSedeLegale.via} {cliente.indirizzoSedeLegale.civico}, {cliente.indirizzoSedeLegale.cap} {cliente.indirizzoSedeLegale.comune.nome}, {cliente.indirizzoSedeLegale.comune.provincia.sigla}</p>
                                     <p className="m-0">Data inserimento: {cliente.dataInserimento}</p>
                                     {cliente.dataUltimoContatto && <p className="m-0">Data ultimo contatto: {cliente.dataUltimoContatto}</p>}
+                                    <Button variant="danger" onClick={(e) => chiamaCliente(e, cliente.clienteId)}>Chiama cliente</Button>
                                 </Col>
                             </Row>
                         </Card>
