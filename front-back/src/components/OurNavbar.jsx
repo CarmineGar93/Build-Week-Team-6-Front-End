@@ -10,6 +10,8 @@ const OurNavbar = () => {
                     <Nav className="me-auto">
                         <Link to={"/clienti"} className='nav-link text-white'>Clienti</Link>
                         <Link to={"/fatture"} className='nav-link text-white'>Fatture</Link>
+                        <Link to={"/register"} className='nav-link text-white'>Registra Utente</Link>
+
                     </Nav>
                 </Navbar.Collapse>
             </Container>

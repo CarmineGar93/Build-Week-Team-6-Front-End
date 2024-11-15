@@ -1,8 +1,9 @@
 import { Button, Container, Card, Form } from "react-bootstrap";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { SetTokenAction } from '../actions';
+
 
 const FormRegister = () => {
   const [username, setUsername] = useState("");
@@ -117,9 +118,6 @@ const FormRegister = () => {
             Accedi con Apple
           </Button>
         </Form>
-        <Card.Text className='text-center'>
-          Hai già un Account
-        </Card.Text>
       </Card>
     </Container>
   );
