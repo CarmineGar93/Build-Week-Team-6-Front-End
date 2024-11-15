@@ -27,7 +27,7 @@ const FormR = () => {
             });
             if (response.ok) {
                 alert("Registrazione avvenuta con successo!");
-                navigate("/home");
+                navigate("/utenti");
             } else {
                 const error = await response.json();
                 alert(error.message);

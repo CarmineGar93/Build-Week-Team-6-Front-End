@@ -7,6 +7,7 @@ import FormRegister from './components/FormRegister'
 import ClientiComponent from './components/ClientiComponent';
 import FormR from './components/FormR';
 import FattureComponent from './components/FattureComponent';
+import UtenteComponent from './components/UtenteComponent';
 
 function App() {
   return (
@@ -15,8 +16,9 @@ function App() {
         <Route path='/*' element={<Home />} />
         <Route path='/login' element={<FormRegister />} />
         <Route path='/clienti' element={<ClientiComponent />} />
-        <Route path='/register' element ={<FormR />} />
+        <Route path='/register' element={<FormR />} />
         <Route path='/fatture' element={<FattureComponent />} />
+        <Route path='/utenti' element={<UtenteComponent />} />
       </Routes>
     </BrowserRouter>
   );

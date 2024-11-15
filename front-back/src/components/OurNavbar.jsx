@@ -13,7 +13,7 @@ const OurNavbar = () => {
                         <Link to={"/clienti"} className='nav-link text-white'>Clienti</Link>
                         <Link to={"/fatture"} className='nav-link text-white'>Fatture</Link>
                         {
-                            ruoli.some(ruolo => ruolo === 'ADMIN') && <Link to={"/register"} className='nav-link text-white'>Registra Utente</Link>
+                            ruoli.some(ruolo => ruolo === 'ADMIN') && <Link to={"/utenti"} className='nav-link text-white'>Utenti</Link>
                         }
 
                     </Nav>
