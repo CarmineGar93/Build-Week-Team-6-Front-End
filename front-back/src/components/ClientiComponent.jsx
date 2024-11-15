@@ -3,10 +3,15 @@ import OurNavbar from "./OurNavbar"
 import { useSelector } from "react-redux"
 import { Card, Row, Col, Button } from "react-bootstrap"
 import ClientiFilter from "./ClientiFilter"
+import CreazioneCliente from "./CreazioneCliente"
 
 const ClientiComponent = () => {
     const token = useSelector(state => state.token.token)
+    const ruoli = useSelector(state => state.ruoli.ruoli)
     const [clienti, setClienti] = useState([])
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     const retrieveClienti = async () => {
         try {
             const response = await fetch("http://localhost:3001/clienti", {
@@ -79,18 +84,30 @@ const ClientiComponent = () => {
         }
     };
     useEffect(() => {
-        retrieveClienti()
+        if (!show) {
+            retrieveClienti()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [show])
     return (
         <>
             <OurNavbar />
+            <CreazioneCliente show={show} handleClose={handleClose} />
             <ClientiFilter onFilter={fetchClienti} />
             <h1 className="text-center mb-3">Lista clienti</h1>
             {
+                ruoli.some(ruolo => ruolo === "ADMIN" || ruolo === "USER") && (
+                    <div className="text-center">
+                        <Button className="mb-3" onClick={() => handleShow()}>Aggiungi nuovo cliente</Button>
+                    </div>
+                )
+            }
+
+
+            {
                 clienti.map(cliente => {
                     return (
-                        <Card key={cliente.clienteId} className="mb-2">
+                        <Card key={cliente.clienteId} className="m-2">
                             <Row className="p-1">
                                 <Col xs={'auto'}>
                                     <img src={cliente.logoAziendale} alt="" width={100} height={100} />
