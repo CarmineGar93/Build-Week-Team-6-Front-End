@@ -2,6 +2,7 @@ import { useSelector } from "react-redux"
 import OurNavbar from "./OurNavbar"
 import { useEffect, useState } from "react"
 import { Table } from 'react-bootstrap'
+import FattureFilter from "./FattureFilter"
 
 const FattureComponent = () => {
     const token = useSelector(state => state.token.token)
@@ -27,12 +28,35 @@ const FattureComponent = () => {
             alert("Si è verificato un errore. Riprova più tardi.");
         }
     }
+    const fetchFattureFiltered = async (filterParams) => {
+        const stringaAnno = filterParams.anno ? `anno=${filterParams.anno}&` : ``;
+        const stringaDataEmissione = filterParams.dataEmissione ? `data=${filterParams.dataEmissione}&` : ``;
+        const stringaStatoFattura = filterParams.statoFattura ? `statoId=${filterParams.statoFattura}&` : ``;
+        const stringaCliente = filterParams.cliente ? `clienteId=${filterParams.cliente}&` : ``;
+        const stringaImportoMax = filterParams.importoMax ? `importoMax=${filterParams.importoMax}&` : ``;
+        const stringaImportoMin = filterParams.importoMin ? `importoMin=${filterParams.importoMin}&` : ``;
+        const stringaSortBy = filterParams.sortBy ? `sortBy=${filterParams.sortBy}&` : ``;
+        try {
+            const response = await fetch("http://localhost:3001/fatture?" + stringaAnno + stringaDataEmissione + stringaStatoFattura + stringaCliente + stringaImportoMax + stringaImportoMin + stringaSortBy, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data)
+            setFatture(data.content)
+        } catch (error) {
+            console.error('Errore nel recupero dei clienti:', error);
+        }
+    };
     useEffect(() => {
         retrieveFatture()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     return (
         <>
             <OurNavbar />
+            <FattureFilter onFilter={fetchFattureFiltered} />
             <h1 className="text-center mb-3">Lista Fatture</h1>
             <Table striped bordered hover size="sm">
                 <thead>
