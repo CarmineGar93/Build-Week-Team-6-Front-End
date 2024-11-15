@@ -1,6 +1,8 @@
 import { Navbar, Container, Nav } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 const OurNavbar = () => {
+    const ruoli = useSelector(state => state.ruoli.ruoli)
     return (
         <Navbar expand="lg" className="bg-black mb-3">
             <Container>
@@ -10,7 +12,9 @@ const OurNavbar = () => {
                     <Nav className="me-auto">
                         <Link to={"/clienti"} className='nav-link text-white'>Clienti</Link>
                         <Link to={"/fatture"} className='nav-link text-white'>Fatture</Link>
-                        <Link to={"/register"} className='nav-link text-white'>Registra Utente</Link>
+                        {
+                            ruoli.some(ruolo => ruolo === 'ADMIN') && <Link to={"/register"} className='nav-link text-white'>Registra Utente</Link>
+                        }
 
                     </Nav>
                 </Navbar.Collapse>
