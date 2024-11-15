@@ -1,13 +1,38 @@
 import { useSelector } from "react-redux"
 import OurNavbar from "./OurNavbar"
 import { useEffect, useState } from "react"
-import { Table } from 'react-bootstrap'
+import { Table, Button } from 'react-bootstrap'
 import FattureFilter from "./FattureFilter"
+import CreazioneFatture from "./CreazioneFatture"
 
 const FattureComponent = () => {
     const token = useSelector(state => state.token.token)
     const ruoli = useSelector(state => state.ruoli.ruoli)
+    const [listaClienti, setListaClienti] = useState([])
     const [fatture, setFatture] = useState([])
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const retrieveClienti = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/clienti", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+                setListaClienti(data)
+            } else {
+                const error = await response.json();
+                alert(error.message);
+            }
+        } catch (error) {
+            console.log("Errore:", error);
+            alert("Si è verificato un errore. Riprova più tardi.");
+        }
+    }
     const retrieveFatture = async () => {
         try {
             const response = await fetch("http://localhost:3001/fatture?size=100", {
@@ -50,14 +75,28 @@ const FattureComponent = () => {
         }
     };
     useEffect(() => {
-        retrieveFatture()
+        retrieveClienti()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    useEffect(() => {
+        if (!show) {
+            retrieveFatture()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [show])
     return (
         <>
             <OurNavbar />
-            <FattureFilter onFilter={fetchFattureFiltered} />
+            <FattureFilter onFilter={fetchFattureFiltered} listaClienti={listaClienti} />
             <h1 className="text-center mb-3">Lista Fatture</h1>
+            {
+                ruoli.some(ruolo => ruolo === "ADMIN" || ruolo === "CONTABILE") && (
+                    <div className="text-center">
+                        <Button className="mb-3" onClick={() => handleShow()}>Aggiungi una nuova fattura</Button>
+                    </div>
+                )
+            }
+            <CreazioneFatture show={show} handleClose={handleClose} listaClienti={listaClienti} />
             <Table striped bordered hover size="sm">
                 <thead>
                     <tr>

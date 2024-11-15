@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
-const FattureFilter = ({ onFilter }) => {
+const FattureFilter = ({ onFilter, listaClienti }) => {
     const token = useSelector(state => state.token.token)
     const [cliente, setCliente] = useState('');
     const [anno, setAnno] = useState('');
@@ -11,28 +11,8 @@ const FattureFilter = ({ onFilter }) => {
     const [importoMin, setImportoMin] = useState('');
     const [importoMax, setImportoMax] = useState('');
     const [sortBy, setSortBy] = useState('numero');
-    const [listaClienti, setListaClienti] = useState([])
     const [listaStatiFattura, setListaStatiFattura] = useState([])
-    const retrieveClienti = async () => {
-        try {
-            const response = await fetch("http://localhost:3001/clienti", {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
-            if (response.ok) {
-                const data = await response.json()
-                console.log(data)
-                setListaClienti(data)
-            } else {
-                const error = await response.json();
-                alert(error.message);
-            }
-        } catch (error) {
-            console.log("Errore:", error);
-            alert("Si è verificato un errore. Riprova più tardi.");
-        }
-    }
+
     const retrieveStatiFauttra = async () => {
         try {
             const response = await fetch("http://localhost:3001/statofatture", {
@@ -54,7 +34,6 @@ const FattureFilter = ({ onFilter }) => {
         }
     }
     useEffect(() => {
-        retrieveClienti()
         retrieveStatiFauttra()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
